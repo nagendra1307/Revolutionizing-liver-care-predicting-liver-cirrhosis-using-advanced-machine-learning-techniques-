@@ -1,0 +1,52 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load dataset
+df = pd.read_csv('liver_disease_dataset.csv')  # replace with your actual file path
+
+# Basic overview
+print(df.head())
+print(df.info())
+
+# Replace 1/2 labels for better readability
+df['Class'] = df['Class'].map({1: 'Liver Disease', 2: 'No Liver Disease'})
+
+# Distribution of the target variable
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Class', data=df, palette='Set2')
+plt.title('Distribution of Liver Disease Cases')
+plt.show()
+
+# Gender distribution
+plt.figure(figsize=(6, 4))
+sns.countplot(x='Gender', data=df, hue='Class', palette='Set1')
+plt.title('Gender-wise Liver Disease Distribution')
+plt.show()
+
+# Age distribution
+plt.figure(figsize=(8, 5))
+sns.histplot(df['Age'], kde=True, bins=30, color='skyblue')
+plt.title('Age Distribution of Patients')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.show()
+
+# Correlation Heatmap
+plt.figure(figsize=(12, 10))
+corr = df.corr()
+sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+# Box plots for key features
+features = ['Total_Bilirubin', 'Direct_Bilirubin', 'Alkaline_Phosphotase',
+            'SGPT', 'SGOT', 'Albumin', 'Albumin_and_Globulin_Ratio']
+
+plt.figure(figsize=(16, 12))
+for i, col in enumerate(features, 1):
+    plt.subplot(3, 3, i)
+    sns.boxplot(x='Class', y=col, data=df, palette='Set3')
+    plt.title(f'{col} vs Class')
+plt.tight_layout()
+plt.show()
