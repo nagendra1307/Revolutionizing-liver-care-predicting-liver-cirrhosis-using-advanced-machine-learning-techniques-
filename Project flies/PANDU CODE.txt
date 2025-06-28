@@ -1,0 +1,54 @@
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.neighbors import KNeighborsClassifier
+
+# Load dataset
+df = pd.read_csv('liver_data.csv')  # Replace with your dataset path
+
+# Basic preprocessing
+df = df.dropna()  # Drop missing values for simplicity (you can handle them better if needed)
+
+# Encode categorical variables
+le = LabelEncoder()
+if 'Gender' in df.columns:
+    df['Gender'] = le.fit_transform(df['Gender'])
+
+# Set features and target
+X = df.drop('LiverDisease', axis=1)  # Replace 'LiverDisease' with the actual target column
+y = df['LiverDisease']
+
+# Standardize features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Define models to train
+models = {
+    'Logistic Regression': LogisticRegression(),
+    'Decision Tree': DecisionTreeClassifier(),
+    'Random Forest': RandomForestClassifier(),
+    'Support Vector Machine': SVC(),
+    'K-Nearest Neighbors': KNeighborsClassifier()
+}
+
+# Train and evaluate each model
+for name, model in models.items():
+    print(f"\nTraining {name}...")
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    print(f"{name} Accuracy: {acc:.4f}")
+    print("Classification Report:")
+    print(classification_report(y_test, y_pred))
+    print("Confusion Matrix:")
+    print(confusion_matrix(y_test, y_pred))
